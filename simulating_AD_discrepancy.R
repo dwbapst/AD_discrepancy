@@ -3,8 +3,9 @@ library(paleotree)
 setwd("~/AD_discrepancy")
 
 files <- list.files()
-if(any(files == "saved_AD_discrepancy_workspace.Rdata")){
-	load("saved_AD_discrepancy_workspace.Rdata")
+saveFileName <- "saved_AD_discrepancy_workspace.Rdata"
+if(any(files == saveFileName)){
+	load(saveFileName)
 }else{
 
 # let's do a bunch and concatanate
@@ -19,7 +20,7 @@ sampRate <- extRate
 # shouldn't matter as sampling rate falls out of A&D's equations...
 
 # set a seed
-set.seed(1)
+set.seed(444)
 isExtant_all <- AD_overlap_all <- AD_diff_all <- list()
 # iterate over nRun
 for(run in 1:nRun){

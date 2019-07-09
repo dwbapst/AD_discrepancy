@@ -25,6 +25,7 @@ isExtant_all <- AD_overlap_all <- AD_diff_all <- list()
 # iterate over nRun
 for(run in 1:nRun){
 	# get a simulated fossil record
+	saveSeed <- .Random.seed
 	record <- simFossilRecord(
 		p = origRate,
 		q = extRate, 
@@ -119,6 +120,8 @@ for(run in 1:nRun){
 save.image("saved_AD_discrepancy_workspace.Rdata")
 
 }
+
+# dput(saveSeed)
 	
 ############################################
 

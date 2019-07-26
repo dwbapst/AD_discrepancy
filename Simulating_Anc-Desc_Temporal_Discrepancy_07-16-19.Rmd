@@ -450,6 +450,8 @@ for(run in 1:nRun){
 		q = extRate, 
 		r = sampRate, 
 		nruns = 1,
+		# do not consider extant taxa as sampled
+		modern.samp.prob = 0,
 		# controls
 		totalTime = c(0, 1000), 
 		nTotalTaxa = c(1, 1000),

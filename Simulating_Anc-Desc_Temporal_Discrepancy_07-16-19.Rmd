@@ -364,20 +364,20 @@ mtext(side=4, line=-5.2, text="Probability")
 
 ```
 
-And now we can see that the probability of sampling from those regions of excess overlap is only going to be relatively high when (a) the ranges of the ancestor and the descendant are nearly perfectly overlapping (`T_R_no ~ 0`, or `T_o ~ T_R`), and (b) when the ranges are long relative to the discrepancy between the descendant and the ancestor. And, let's expand those maxima to 6 million years just to illustrate the point and look at a very similar plot but for the probability of observing a descendant predating its ancestor by a discrepancy as long as `T_d`, `Pr(H_A - H_D > T_d)`.
-
+And now we can see that the probability of sampling from those regions of excess overlap is only going to be relatively high when (a) the ranges of the ancestor and the descendant are nearly perfectly overlapping (`T_R_no ~ 0`, or `T_o ~ T_R`), and (b) when the ranges are long relative to the discrepancy between the descendant and the ancestor. And, let's expand those maxima to 80 million years just to illustrate the point (`T_d * 5oh0 = 40`) and look at a very similar plot but for the probability of observing a descendant predating its ancestor by a discrepancy as long as `T_d`, `Pr(H_A - H_D > T_d)`. We'll rescale the color scale (probability) to a range of 0 to 0.5, as we know that 0.5 is the maximum limit in this case.
 
 ```{r echo = FALSE, dev='png'}
 
 T_d <- 0.8
-nsamp <- 1000
+nsamp <- 2000
+max_T <- 40
 
 # set T_o
-max_T_o <- 6
-T_o <- seq(T_d, max_T_o, length.out = nsamp)
+
+T_o <- seq(T_d, max_T, length.out = nsamp)
 
 # set T_R_no
-T_R_no <- seq(0, 6, length.out = nsamp)
+T_R_no <- seq(0, max_T, length.out = nsamp)
 
 P_H_diff_greater <- matrix(NA, nrow = nsamp, ncol = nsamp)
 rownames(P_H_diff_greater) <- T_o
@@ -396,7 +396,7 @@ for(i in 1:nsamp){
 filled.contour(
     z = P_H_diff_greater, 
     x = T_o, y = T_R_no,
-    zlim = c(0,1),
+    zlim = c(0,0.5),
     color.palette = terrain.colors,
     xlab = "Duration of Overlap (T_o)",
     ylab="Range Duration In Excess of Overlap (T_R - T_o)",
@@ -407,13 +407,17 @@ mtext(side=4, line=-5.2, text="Probability")
 
 ```
 
-an ancestor ever post-dating its descendant is really only possible 
+Thus, under the model presented by D&A and its set of assumptions, we can see that ancestors post-dating their descendants by even what might be small geological intervals (e.g. less than a million years) is only *likely* when geologic durations are long relative to the length of the discrepancy in the ages of appearance (at least 3-5 times T_d, the discrepancy), and the descendant's range overlaps for about a quarter of its range with its ancestor.
 
-
+Now, there are hundreds, or possibly thousands, of putative ancestor-descendant relationships that exist in the paleontological literature. This agrees with our theoretical understanding of diversification and the incompleteness of the fossil record, which suggests that there should sampled ancestors, and that their number may not be great but should not be negligible (Foote, 1996). However, D&A's model implies we should rarely expect ancestors to occur after their descendants. But, are these reasonable assumptions? What does a realistic birth-death-sampling simulation tell us?
 
 # Simulation Tests
 
+Here, I will attempt to compare D&A's model to a birth-death-sampling simulation, run 10,000 times, and parameterized to closely as possible match the parameters they worked with in their study. A birth-death-sampling model is simply a model of lineages, with events occurring as if a series of independent Poisson processes, with morphotaxa 'budding' off from each other at some rate (the rate of origination, or the *birth rate*), going extinct at some rate (the rate of extinction, or *death rate*), and being sampled at particular instances in time (the *sampling rate*). These processes are presumed to be constant with uniform rates, that do not vary over time. That's almost certainly false when humanity involved, but let's just ignore that for the sake of doing the simulations at all.
 
+Handily, the extinction rate is widely known to be the inverse of the mean *true* species duration. Note the 'true' - the observed species durations will always be smaller than the true ranges, due to incomplete sampling at both ends (and thus in better sampled records, more sampling means ranges that look more like the 'true' ranges.) However, we'll ignore that effect of sampling and assume extinction rates is `1/0.97`, the inverse of the mean species duration used by D&A. (This literally means that if we had a hundred species at time A, we'd expect about half of them to be extinct 0.97 Ma later - so this is a **very** high extinction rate! The average for marine invertebrates is 0.1 per lineage, per Ma - implying an average extinction rate of 10 Ma.) Even more handily, we know that for most groups in the fossil record, the long-term origination and extinction rates are generally nearly equal (Stanley, 1976; Sepkoski, 1998; Marshall, 2016). We don't really understand why that is (its partly a mathematical artifact, but also partly *not*, and doesn't agree with estimates of speciation and extinction rates from molecular phylogenies), but we can probably safely assume that the origination rate for hominins has, in the long term, been pretty similar to the rate of extinction, given that only ones species has managed to survive to today. A per-lineage sampling rate isn't really touched upon by D&A, as the parameter does not matter to their calculations, and I would hesitate to try to estimate such myself, so we can set that also equal to the extinction rate for now.
+
+Birth-death-sampling simulations are notorious for having wildly variable results (e.g. most that start with a single species go extinct immediately), and thus we need to set constraints on what simulation output we'll accept as a viable run or not (non-viable runs are thrown out, and the simulation is run again, until the required number of acceptable runs is produced). We will require at least 10 taxa sampled in each simulated fossil record (but no more than a 100), and at least 1 extant taxon in each output run. Most runs will likely have dozens of sampled species, even with these seemingly low limits.
 
 ```{r include = FALSE, echo = FALSE}
 
@@ -432,7 +436,7 @@ extRate <- 1/0.97
 origRate <- extRate
 # set sampling rate maybe equal to ext rate (??)
 sampRate <- extRate
-# shouldn't matter as sampling rate falls out of A&D's equations...
+# shouldn't matter as sampling rate falls out of D&A's equations...
 
 # set a seed
 set.seed(444)

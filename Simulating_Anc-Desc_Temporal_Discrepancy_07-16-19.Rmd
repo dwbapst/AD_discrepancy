@@ -6,17 +6,416 @@ date: "July 16, 2019"
 output: pdf_document
 ---
 
+```{r include = FALSE, echo = FALSE}
+library(paleotree)
+setwd("~/AD_discrepancy")
+```
+
 ## Du and Alemseged 2019: Temporal Evidence and Ancestor-Descendant Relationships
 
+In an incomplete fossil record, the order of appearance in the fossil record may be a poor reflection of phylogeny. Additional complications arise when morphologically-delimited taxa are persistently found over geological durations, including when they 'persist through' a speciation event that produces a differentiated descendant morphotaxon. In such cases, the 'ancestral' morphotaxa will be extant at the same point in time (but perhaps not the same location) as their 'descendant' morphotaxa, and thus the incomplete record may preserve traces of the 'descendant' before its own 'ancestor'. But how often should we expect to see this in the real fossil record? How unlikely is a an age 'discrepancy' (as I will term it) of a given size?
 
+Du and Alemseged (2019, hereafter D&A) attempt to answer this question, with specific reference to whether the *A. sediba* morphotaxon could possibly be the ancestor to *Homo*, whose first supposed fossil occurrences appear to post-date its own occurrence by a considerable duration (for the hominin fossil record). Their finding is that they overall find the observed ancestor-descendant discrepancy to be of an unlikely duration. This document is an investigation of that claim. I'm not an anthropologist, and I hold no opinion whatsoever to the actual data, so I am going to largely accept their statements about dates and taxon identity, and mainly interrogate their methods.
+
+D&A present two lines of arguments to evaluate the supposed ancestor-descendant hypothesis, given the temporal discrepancy:
+
+a) A model describing the probability of a discrepancy of a given magnitude, under a certain set of assumptions. (Described more below.) This model finds a very low probability of a discrepancy as large as the observed discrepancy, and consistently finds such under a range of conditions.
+
+b) An empirical dataset of the geologic age difference between the 'first found' fossils for 28 previously-hypothesized ancestor-descendant pairs from the paleoanthropology literature. In other words, if each species was only ever a single find - the first reported collection of that find with no subsequent collections- what would the age difference be between those two species? Only one A-D pair has a discrepancy (with the descendant's first-find being geologically dated older than the first-find of the descendant), and that discrepancy is very small relative to the gap between *Homo* and *A. sediba*. 
+
+I will critique these arguments in reverse order.
+
+## The Metadata of Published Reports of Ancestor-Descendant Pairs
+
+My initial concern upon reading the paper was that ancestor-descendant pairs as reported from the literature are often a limited subset of what might be true. As D&A describe in their discussion, this might particularly impact their conclusion because temporal information is (nearly always) taken into account when someone decides to suggest something is ancestral to something else. Thus, they use the first-finds of each taxon instead, based on the idea that the hypothesized ancestor-descendant relationships might be based on later, roughly independent temporal information.
+
+I rather like the attempt using first-finds to avoid the issue of a taxon's whole temporal range being non-independent of it being placed as an ancestor or descendant, but I'm not sure its enough.
+
+First, does first-finds remove the bias? I am not entirely convinced, because when people make arguments for ancestor-descendant pairs, I think that's more likely to take into account temporal information from their earliest collections, not their latest collections. I mean, in the invert paleo world, newly published finds often change a taxon's temporal range - but that information might take decades for someone else to notice and take that into account in their interpretations. Thus, the first find and the original geochronological interpretation of that find is most influential. I would probably like to know (a) what's the geologic age difference if we restricted each pair to looking at the most recent collections from each species, and/or (b) what's the distribution of age difference look like if we took all the collections from each taxon in these ancestor-descendant pairs, and used a Monte Carlo approach to sample a single collection at random from each taxon, and look at the distribution in difference in age for all these artificial 'one-collection' taxa. (This is similar to Alroy's 1996 analysis of Cope's Rule, where he sampled subsampled species pairs from genera to examine ancestor-descendant trends in body size change.) A full examination would compare these distributions of randomized age differences, to the age differences in the actual, currently-accepted first appearance times for those taxa.
+
+Second, while I absolutely believe that ancestor-descendant relationships is something we should talk about and consider, but I'm not convinced of the utility of previously published pairs as a baseline for what we should expect of ancestor-descendant pairs at large. For example, in my 2017 paper with Melanie Hopkins on the finely resolved record of late Cambrian pterocephaliid trilobites, we found support for up-to 16 ancestor-descendant pairs, when really only 9 pairs had been proposed previously in the literature (including several pairs where which taxon was the ancestor, and which was the descendant, was uncertain, due to uncertainty in the first appearance dates). Now, no single phylogenetic hypothesis (the method used produces samples containing hundreds of possible trees) contained all 16 pairs, but a single tree often had higher numbers of pairs than had been previously proposed. So, my expectation is that for most groups, the inclination to label specific ancestor-descendant pairs has probably been overly conservative (one exception may be ammonites or planktonic foraminifera, where systematics is still largely very traditional rather than based on quantitative analysis of character matrices, and large numbers of taxa are placed as stages along long ancestor-descendant sequences of anagenesis). Maybe hominids are like those groups, and workers have been less conservative than they should have been, but maybe not, and my expectation is that thus the ancestor-descendant pairs reported for any given group is an extremely conservative subset of those, probably over-representing those that are the most consistent with being ancestor-descendant pairs in terms of their morphological and stratigraphic relationships. Overall, this adds up to an overwhelming bias against proposing ancestors that appear later than their descendants, a bias that probably leads to us underestimating the true occurrence of ancestors occurring latter than their descendants.
+
+Third, I would still have problems with  comparison because this is so unlike the ancestor-descendant pair we are most interested in - *A. sediba* and *Homo*. Well, the first collection of *Homo* would be, **well**, us recognizing that we are extant human beings (first fossil collection would be - well, I really have no idea, but its probably pretty geologically recent). Thus, that pair has no discrepancy as evaluated by the first-find approach. One taxon is also a species known from a single very time-constrained set of collections, and the other is a genus, that becomes relatively diverse (encompassing multiple species or sub-species or proto-species or whatever you want to call them...). Under a standard birth-death-sampling model, we would expect that such increased lineage diversity makes sampling *Homo* later much more likely later than earlier, even if there is a long 'fuse' interval with a very incomplete record. (Note though that this dynamic, admittedly, strengthens their case for their probabilistic model.) I think really we would need to identify a specific *Homo* species, and talk about that species-pair specifically rather than the genus itself.
+
+### Du & Alemseged's Model of Range Overlap and Ancestor-Descendant Temporal Discrepancy
+
+In my data analysis courses, I tell students that models are just sets of assumptions about the world. We may describe those assumptions as mathematical relationships, but really any model is just a bundle of assumptions, and models derive all their explanatory power from the strength and specificity of those assumptions. So what are D&A assumptions? Three of these are explicitly laid out:
+
+1) The two taxa in question are assumed to have true ranges (the time between the true time of origination and extinction) of equal duration. In this case, the two taxa are both assumed to have 0.97 Ma (mega-annum) ranges. That's an average taken from Robinson et al - its obviously not true for *Homo*, which obviously has a longer duration than 1 Ma. It isn't clear from D&A what the choice of 0.97 Ma or inferring equal length ranges has on their findings.
+
+2) The fossil record is assumed to have uniform sampling, across space and time, and across both the ancestor and descendant. As I already indicated above, the fact *Homo* encompasses multiple species would effectively violate this assumption, but the if that effect  was taken into account, it would make it even more unlikely for the record to preserve *Homo* earlier in geologic time, and thus the bias works in agreement with D&A's findings. This is a common assumption of sampling models for the fossil record, and while it is often critized (see Steven Holland's work in particular), D&A far and away exceed the typical defense against this criticism by presenting evidence that hominin.
+
+3) Sampling events (collections, occurrences, fossil horizons - whatever you want to call them!) are independent in time and across lineages. This is a common assumption of sampling models for the fossil record, and there aren't many cases where I would argue for the opposite.
+
+Others are not so explicit:
+
+4) This is a direct ancestor-descendant relationship. There are no additional, 'unknown unknown' taxa with similar sampling rates. Often, when we find ancestor-descendant pairs in the fossil record, we are probably not finding direct ancestor-descendant pairs (this morphotaxon is *directly* descended from this other morphotaxon) but rather we might be missing a few completely un-sampled, un-observed morphotaxa in between. As Foote (1996) recognized, ancestor-descendant relationships are probably relatively common in the fossil record, especially indirect ancestor-descendant relationships. Now, recognizing the possibility for 'unseen' lineages would decrease the probability of finding larger A-D discrepancies, so this bias works against D&A's test (and thus strengthens their findings).
+
+From this, they derive the probability that any one occurrence of a descendant would occur before any one occurrence of an ancestor. Interestingly, and surprisingly to me, they find that sampling rate doesn't actually impact this probability - a well-sampled fossil record and poorly-sampled fossil record are expected to have very similar probabilities for a given ancestor-descendant discrepancy, for two taxa that have identical durations, and share the same uniform sampling rate (whatever that rate happens to be).
+ 
+Some properties of this model are unclear in the draft, such as 'what if taxon range is varied?'. So let's consider scenarios under this model ourselves. In doing this, I will avoid relying on or refering to the supplemental R script provided by D&A, so that I am sure I understand all the relevant details.
+
+This model mainly has three major variables related to intervals of various length: the duration of the range for each taxon (`T_R`, which D&A set to 0.97 Ma), the observed minimum stratigraphic overlap between the two taxa, which is a fixed variable of interest and is essentially the A-D discrepancy, or difference in age between the descendant and the ancestor (`T_d`, which D&A set to 0.8 Ma, the apparent discrepancy between *A. sediba* and *Homo*), and the true, total amount of overlap between the ancestor and the descendant (both of which, note well, have equally long ranges), and is treated as a random variable in D&A's model (`T_o`). 
+
+Several additional variables are worth noting. With respect to D&A's general notation and figures, the age of the ancestor's horizon is `H_A`, the age of the descendant's horizon is `H_D`, and the offset between an descendant's true time of origination and its time of sampling is `X_D`, while `X_A` is designated as the offset between the descendant's and ancestor's horizons, minus the minimum discrepancy (`T_d`). `X_A` and `X_D` are thus treated as random variables in this model, with minimums at 0. For the descendant's horizon to post-date the ancestor's horizon by a gap as large as `T_d`, and for all other assumptions to hold, `T_R > T_o > T_d`, and thus putting bounds on `T_R` and `T_d` defines the range of possible values for `T_o`.  Additionally, `X_A + X_D = T_o - T_d`, `H_A - H_D > T_o` and `X_D <= X_A` (D&A state greater than, but I do not comprehend any reason for why they cannot be equal and for all other conditions to still hold).
+
+```{r echo = FALSE, dev='png'}
+
+# variables
+
+# duration of the entire range
+	# D&A treat this as a fixed variable based on avg species duration
+	# for now let's say 1
+T_R <- 1
+
+# MINIMUM amount of time that an
+	# ancestor's FAD (H_A) post-dates a descendant's FAD (H_D)
+	# this is a fixed variable of interest in D&A
+		# a lower bound of observed discrepancy
+	# e.g. 0.1 
+T_d <- 0.1
+
+```
+
+```{r echo = FALSE, dev='png'}
+# amount of range overlap between anc and desc
+	# this is a MINIMUM and represents range extention
+		# in either direction (ancestor sampled later or
+		# descendant originated earlier)
+	#
+	# the time between the true origin of the ancestor
+		# and the first observed find of the descendant (H_D)
+	#
+	# D&A treat as identical to the time between the
+		# true origin of the descendant and the 
+		# first observed find of the ancestor (H_A)
+		# see (Fig 2)
+	#
+	# this is a random variable in D&A
+	# for now let's say 0.5
+T_o <- 0.5
+
+```
+
+```{r echo = FALSE, dev='png'}
+# for desc FAD (H_D) to post-date anc FAD (H_A)
+# T_R > T_o > T_d
+
+# Thus, T_R places a maximum limit on T_o values
+#  and, T_d places a minimum limit on T_o values
+
+# The difference between T_d and T_o is X_A and X_D
+
+```
+
+```{r echo = FALSE, dev='png'}
+# X_A and X_D
+
+# for T_o to be greater than T_d, the ancestor 
+	# must be sampled some time (H_A) *after*
+	# the first sampled occurrence of descendant (H_D) + T_d
+# this is X_A
+
+# OR 
+
+# for T_o to be greater than T_d, the descendant 
+	# must be sampled some time (H_D) *before*
+	# the first sampled occurrence of ancestor (H_A) - T_d
+# this is X_A	
+
+# X_A and X_D are thus random variables, with minimums at 0
+
+# for overlap to occur at all, 
+	# X_A > X_D
+# And
+	# X_A + X_D = T_o - T_d
+# (sort of - remember that T_o is a random variable with a minimum)
+
+```
+
+```{r echo = FALSE, dev='png'}
+# equation 1
+# probability that you'd sample the descendant before the ancestor
+	# given the total ranges and the amount of overlap
+
+# P_endD <- (T_o - T_d) / T_R
+
+# and because we assume that the
+	# ancestor and descendant have identical durations
+	# we assume that the potential amount of time between
+	# T_o and T_d for H_A and H_D is distributed similarly
+# P_endA <- P_endD
+```
+
+```{r echo = FALSE, dev='png'}
+# equ 2
+# joint probabilities for P_endD and P_endA
+
+# P_endA_endD <- ((T_o - T_d)^2) / (T_R^2)
+
+```
+
+```{r echo = FALSE, dev='png'}
+# equation 3g
+# prob (X_A > XD) = lambda / 2*lambda = 1/2
+
+# equation 5
+# prob (H_A - H_D > T_D, given P_endA_endD) is 0.5
+
+# equation 5b
+
+# prob (H_A - H_D > T_D) = prob (H_A - H_D > T_D, given P_endA_endD) * P_endA_endD
+# prob (H_A - H_D > T_D) = 1/2 * ((T_o - T_d)^2) / (T_R^2)
+
+```
+
+Equation 1 describes the probability of one fossil being found in a horizon within the region of overlap defined by `T_o - T_d`, and equation 2 describes the joint probability for two fossils (one for the ancestor, one for the descendant) from this limited region (referred to as `Pr(endA_endD)`). This is used in equation 3 (which is derived through a number of steps, during which the sampling rate drops out) to find the probability of `X_A > X_D`. By alternatively setting `X_D` or `X_A` equal to a random variable `t` and iterating over that variable, D&A determne that the probability of `X_A > X_D` is 1/2, regardless of whether `X_A` or `X_D`is set equal to `t`. This leads them to state in equation 4 that 1/2 is also the probability of `H_A - H_D > T_d`, when conditioned on only sampling horizons from the region of 'excess' overlap (D&A continually refer to this 'excess overlap' interval, or pair of intervals, as 'the black region(s)', in reference to their figure 2). This conditioned probability as `Pr(H_A - H_D > T_d | endA_endD)`.
+
+In equation 5, they use the joint probability of `endA_endD`, from equation 2, to remove the conditioning from `Pr(H_A - H_D > T_d | endA_endD)`, and thus obtain the probability of `H_A - H_D > T_d`. This probability is discontinuous, with the probability always being zero when `T_d > T_o`.
+
+```{r echo = FALSE, dev='png'}
+
+# let's use notation:
+# P_H_diff_greater = prob (H_A - H_D > T_D) 
+
+# `Pr(H_A - H_D > T_D
+P_H_diff_greater <- ((T_o - T_d)^2) / (2*(T_R^2)) # 5b
+
+# prob (H_A - H_D > T_D) must be zero when T_d > T_o
+# thus 5b only holds when T_d > T_o
+
+# D&A then used
+T_R <- 0.97
+T_d <- 0.8
+# and tried many values of T_o
+	# presumably from T_o -> T_R
+
+# fig 3 actually shows lots of values with T_d > T_o, and Prob at 0
+	# why even show that
+# obviously the presumed overlap must be greater than the
+	# age discrepancy between FADs of Anc & Desc
+
+```
+
+For example, when `{r} T_R = 0.97` and `{r} T_d = 0.8` (as in D&A's analyses), and (to take a specific example), `{r} T_o = 0.9`, then the probability of `H_A - H_D > T_d` is:
+
+```{r} 
+((T_o - T_d)^2) / (2*(T_R^2))
+```
+
+Or, if `{r} T_R = 1`, `{r} T_d = 0.1`, and `{r} T_o = 0.5`, then the probability of `H_A - H_D > T_d` is:
+
+```{r} 
+((T_o - T_d)^2) / (2*(T_R^2))
+```
+
+We can also use this equation to recreate their figure 3:
+
+```{r echo = FALSE, dev='png'}
+
+# let's try to recreate their figure 3
+
+# note they put both an absolute and relative axes for range
+	# overlap on this plot
+#Relative overlap = total overlap (T_o) / total taxon range (T_R)
+	# but since T_R is so close to 1, they aren't visually distinct
+
+# equation 5b
+# P_H_diff_greater <- ((T_o - T_d)^2) / (2*(T_R^2)) 
+
+T_R <- 0.97
+T_d <- 0.8
+
+T_o <- seq(T_d, T_R, 
+	length.out = 1000)
+
+P_H_diff_greater <- sapply(T_o,
+	function(T_o_i) ((T_o_i - T_d)^2) / (2*(T_R^2)) 
+	)
+
+# add in the 0 to T_d portion with 0 probability
+
+T_o <- c(
+  seq(0,T_d, length.out=100),
+  T_o
+  )
+P_H_diff_greater <- c(
+  rep(0,100),
+  P_H_diff_greater
+  )
+
+	
+plot(T_o, P_H_diff_greater,
+	xlab = "Range Overlap (Possible value of T_o)",
+	ylab = "Prob. of ((Desc's FAD - Anc's FAD) > T_d)",
+	main = ""
+	)
+
+# okay, that was almost too easy to recreate...
+
+```
+
+That was almost too easy. But note that most of this graph (just like D&A's Figure 3 - look at their horizontal axes) is at 0 probability, as the values of `T_o` include the range of 0 Ma to 0.8 Ma, even though `T_d = 0.8` and thus its impossible for an ancestor to occur after its descendant. Its curious why this non-informative interval with *a priori* zero probability is even shown, so let's look at just the informative region.
+
+```{r echo = FALSE, dev='png'}
+
+# let's try to recreate their figure 3
+
+# note they put both an absolute and relative axes for range
+	# overlap on this plot
+#Relative overlap = total overlap (T_o) / total taxon range (T_R)
+	# but since T_R is so close to 1, they aren't visually distinct
+
+# equation 5b
+# P_H_diff_greater <- ((T_o - T_d)^2) / (2*(T_R^2)) 
+
+T_R <- 0.97
+T_d <- 0.8
+
+T_o <- seq(T_d, T_R, 
+	length.out = 1000)
+
+P_H_diff_greater <- sapply(T_o,
+	function(T_o_i) ((T_o_i - T_d)^2) / (2*(T_R^2)) 
+	)
+	
+plot(T_o, P_H_diff_greater,
+	xlab = "Range Overlap (Possible value of T_o)",
+	ylab = "Prob. of ((Desc's FAD - Anc's FAD) > T_d)",
+	main = ""
+	)
+
+# okay, that was almost too easy to recreate...
+
+```
+
+Now we can do things like allowing `T_R` to vary, instead of `T_o` - what if we assume the true overlap between *Homo* and *A. sediba* is just slightly more than the observed minimum overlap (`T_o = 1`, which would mean that *Homo* originated from *A. sediba* at most 20 Ka before *Homo* was first sampled in the fossil record), but we don't know how long the individual ranges of each taxon is, but otherwise put a hard cap on their maximum ranges at 3 million years?
+
+```{r echo = FALSE, dev='png'}
+
+# what if we constrain T_o to 1 (Homo originated at most 100kyr before sediba)
+# and asked how Prob of Discrepancy varied with T_R
+
+T_d <- 0.8
+T_o <- 1
+
+# let's say that Homo and Sediba might be at most 3 million years old
+max_T_R <- 3
+
+T_R <- seq(T_o, max_T_R, 
+	length.out = 1000)
+
+P_H_diff_greater <- ((T_o - T_d)^2) / (2*(T_R^2))
+	
+plot(T_R, P_H_diff_greater,
+	xlab = "Total Taxon Range (T_R)",
+	ylab = "Prob of ((Desc's FAD - Anc's FAD) > T_d)",
+	main = ""
+	)
+
+# very low probabilities??
+	# worse if T_o is larger
+
+```
+
+We can see that giving larger ranges relative to the overlap doesn't at all help the case for descendants to occur before their ancestors, because it means more geologic time during which only the ancestor existed, but wasn't sampled.
+
+So, in figure 3 (or its recreation above), where only `T_o` is varied, we can see that the probability never gets better than 0.015 (1.5%), which leads us to wonder - what set of parameters would produce a high probability for the descendant to predate the ancestor? Presumably the hard cap on this probability is 0.5; this is theoretically true (in what scenario of uniform sampling could an ancestor be less likely to be found first than its descendant?), but also mathematically true as `Pr(H_A - H_D > T_d | endA_endD)` is 1/2, and thus the actual determining part of the model is the probability of fossil finds being in the 'end-caps'excess overlap' of the taxon ranges, given by equation 2 (`Pr(endA_endD)`).
+
+So when is `Pr(endA_endD)` closest to 1? Let's hold `T_d = 0.8` constant, but vary `T_o` and `T_R`, and look at the values of `Pr(endA_endD)` we obtain. Because `T_R > T_o > T_d`, we will vary `T_o` from the value of `T_d` to 3 Ma (extremely unrealistic for our case study, as it probably would require *A. sediba* to still be extant, but this is just an exploration - calm down!), and vary the amount of time in the fossil taxon ranges that is not part of their overlap (`T_R_no`, where `T_R - T_o = T_R_no`), with `T_R_no` ranging from 0 to (again) a maximum 3 Ma (which isn't just implausible, but patently impossible in our case as the fossil record in quest isn't from six million years ago...).
+
+
+```{r echo = FALSE, dev='png'}
+
+T_d <- 0.8
+nsamp <- 1000
+
+# set T_o
+max_T_o <- 3
+T_o <- seq(T_d, max_T_o, length.out = nsamp)
+
+# set T_R_no
+T_R_no <- seq(0, 3, length.out = nsamp)
+
+P_endA_endD <- matrix(NA, nrow = nsamp, ncol = nsamp)
+rownames(P_endA_endD) <- T_o
+colnames(P_endA_endD) <- T_R_no
+
+for(i in 1:nsamp){
+  T_o_i <- T_o[i]
+  for(j in 1:nsamp){
+    T_R_j <- T_o_i + T_R_no[j]
+    P_endA_endD[i,j] <- ((T_o_i - T_d)^2) / (T_R_j^2)
+    }
+  }
+
+
+filled.contour(
+    z = P_endA_endD, 
+    x = T_o, y = T_R_no,
+    zlim = c(0,1),
+    color.palette = terrain.colors,
+    xlab = "Duration of Overlap (T_o)",
+    ylab="Range Duration In Excess of Overlap (T_R - T_o)",
+    main="Probability Surface for A-D Pair \n With Finds in Excess Overlap"
+    )
+
+mtext(side=4, line=-5.2, text="Probability")
+
+```
+
+And now we can see that the probability of sampling from those regions of excess overlap is only going to be relatively high when (a) the ranges of the ancestor and the descendant are nearly perfectly overlapping (`T_R_no ~ 0`, or `T_o ~ T_R`), and (b) when the ranges are long relative to the discrepancy between the descendant and the ancestor. And, let's expand those maxima to 6 million years just to illustrate the point and look at a very similar plot but for the probability of observing a descendant predating its ancestor by a discrepancy as long as `T_d`, `Pr(H_A - H_D > T_d)`.
+
+
+```{r echo = FALSE, dev='png'}
+
+T_d <- 0.8
+nsamp <- 1000
+
+# set T_o
+max_T_o <- 6
+T_o <- seq(T_d, max_T_o, length.out = nsamp)
+
+# set T_R_no
+T_R_no <- seq(0, 6, length.out = nsamp)
+
+P_H_diff_greater <- matrix(NA, nrow = nsamp, ncol = nsamp)
+rownames(P_H_diff_greater) <- T_o
+colnames(P_H_diff_greater) <- T_R_no
+
+for(i in 1:nsamp){
+  T_o_i <- T_o[i]
+  for(j in 1:nsamp){
+    T_R_j <- T_o_i + T_R_no[j]
+    # `Pr(H_A - H_D > T_d)
+    P_H_diff_greater[i,j] <- ((T_o_i - T_d)^2) / (2 * (T_R_j^2))
+    }
+  }
+
+
+filled.contour(
+    z = P_H_diff_greater, 
+    x = T_o, y = T_R_no,
+    zlim = c(0,1),
+    color.palette = terrain.colors,
+    xlab = "Duration of Overlap (T_o)",
+    ylab="Range Duration In Excess of Overlap (T_R - T_o)",
+    main="Probability Surface for an Ancestor \nFound 0.8 Ma After its Descendant "
+    )
+
+mtext(side=4, line=-5.2, text="Probability")
+
+```
+
+an ancestor ever post-dating its descendant is really only possible 
+
+
+
+# Simulation Tests
 
 
 
 ```{r include = FALSE, echo = FALSE}
-
-library(paleotree)
-
-setwd("~/AD_discrepancy")
 
 files <- list.files()
 saveFileName <- "saved_AD_discrepancy_workspace.Rdata"

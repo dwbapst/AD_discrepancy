@@ -758,21 +758,21 @@ plot(
 
 The above is plotted such that we only see the range overlap values greater than `T_d` (and thus that range where a discrepancy of 0.8 Ma or greater is even possible.) 
 
-We can then superimpose our curve our empirically-derived cumulative distribution of observing a discrepancy greater than `T_d` with the probability estimates from the cumulative function given in Equation 5b of D&A.
+Note that the difference in the horizontal axes on this plot and the previous plot - as D&A's model only considers ranges of 0.97 Ma, the maximum overlap cannot exceed that value. D&A's model doesn't even take into account the possibility for overlaps as great as 2 Ma, or the discrepancies possible at that size of overlap. Thus, to compare the two, it may be more appropriate to restrict our observations to the range of overlaps between 0.8 Ma and 0.97 Ma, and then superimposing our empirically-derived cumulative distribution of observing a discrepancy greater than `T_d` with the probability estimates from D&A within that range.
 
 ```{r echo = FALSE, dev='png'}
 
 # superimpose the model and the simulated results
 
 T_d <- 0.8
+T_R <- 0.97
 
 xlims <- c(
-  0.8, max(c(T_o, AD_overlap_uniq))
+  T_d, T_R
   )
 
 ylims <- c(
-  0, 
-  max(c(P_H_diff_greater, cumulAbove))
+  0, 0.021
   )
 
 lineTypes <- c(4,1)
@@ -801,7 +801,148 @@ legend("topleft",
 ```
 
 
-# So just how likely is a discrepancy of 0.8 Ma?
+However, because discrepancies cannot be larger than overlaps, the simulated distribution at a particular overlap value (e.g. 0.9 Ma) may be underestimated relative to D&A's model expectations, as the cumulative distribution is the proportion of simulation runs showing a value equal to or greater than the value of interest, divided by the number of simulation runs. The numerator is unaffected within our restricted range of overlap values, because discrepancies cannot be larger than overlaps, the cumulative distribution estimated from simulations at a particular overlap value (e.g. 0.9 Ma) doesn't take into account discrepancies larger than 0.97 Ma within the plotted range. However, the denominator for that cumulative probability considers many scenarios where overlap is much greater than 0.97 Ma. Obviously, we have relaxed many assumptions from D&A's model in building this simulation comparison, and many of the simulation runs are not possible under D&A's very specific model assumptions. However, we can at least say that D&A's model is not considering scenarios with overlap that high, and thus remove that proportion from the denominator, and see how much that impacts our comparison.
+
+```{r echo = FALSE, dev='png'}
+
+T_d <- 0.8
+T_R <- 0.97
+
+# recalculate cumulative, ignoring overlap values greater than T_R
+AD_overlap_uniq <- sort(unique(AD_overlap_all))
+
+nSimBelowTR <- sum(AD_overlap_all < T_R)
+
+cumulAbove <- sapply(AD_overlap_uniq, function(x)
+  sum(-AD_diff_all[AD_overlap_all <= x] > T_d) / nSimBelowTR
+  )
+
+# superimpose the model and the simulated results
+
+lineTypes <- c(4,1)
+
+plot(
+  AD_overlap_uniq, 
+  cumulAbove,
+	xlab = "True Range Overlap Between Anc. & Desc. (Ma)",
+	ylab = "Cumulative Probability of Anc-Desc Discrepancy >= 0.8 Ma",
+	main = "Comparing Cumul. Distributions\n for Discrepancy >= T_d (0.8 Ma)",
+  xlim = xlims,
+  ylim = ylims,
+  lty = lineTypes[1]
+  )
+
+lines(T_o, P_H_diff_greater,
+	lty = lineTypes[2]
+	)
+
+legend("topleft",
+       lty = lineTypes,
+       legend = c("Empirical Dist. From Simulations",
+                  "Prob. Estimated from D & A 2019")
+       )
+
+```
+
+This did not really have a very sizeable effect, as the number of ancestor-descendant pairs with overlaps that large a small minority of our simulation results.
+
+Overall, from the last two superimposed plots, we can say that while the two have *extremely* different shapes, possibly having something to do with our relaxation of D&A's strict assumption of descendant and ancestors having similar taxon durations, 
+
+### Does it differ if we condition on extant taxa, or on extinct-only taxa?
+
+Repeating the last plot, but conditioning our data on whether one or both taxa in an AD pair were still extant...
+
+```{r echo = FALSE, dev='png'}
+
+T_d <- 0.8
+T_R <- 0.97
+
+AD_overlap_extant <- AD_overlap_all[isExtant_all]
+AD_diff_extant <- AD_diff_all[isExtant_all]
+
+# recalculate cumulative, ignoring overlap values greater than T_R
+AD_overlap_uniq <- sort(unique(AD_overlap_extant))
+
+nSimBelowTR <- sum(AD_overlap_extant < T_R)
+
+cumulAbove <- sapply(AD_overlap_uniq, function(x)
+  sum(-AD_diff_extant[AD_overlap_extant <= x] > T_d) / nSimBelowTR
+  )
+
+# superimpose the model and the simulated results
+
+lineTypes <- c(4,1)
+
+plot(
+  AD_overlap_uniq, 
+  cumulAbove,
+	xlab = "True Range Overlap Between Anc. & Desc. (Ma)",
+	ylab = "Cumulative Probability of Anc-Desc Discrepancy >= 0.8 Ma",
+	main = "Comparing Cumul. Distributions\n for Discrepancy >= T_d (0.8 Ma)",
+  xlim = xlims,
+  ylim = ylims,
+  lty = lineTypes[1]
+  )
+
+lines(T_o, P_H_diff_greater,
+	lty = lineTypes[2]
+	)
+
+legend("topleft",
+       lty = lineTypes,
+       legend = c("Empirical Dist. From Simulations",
+                  "Prob. Estimated from D & A 2019")
+       )
+
+```
+
+... or all-extinct.
+
+```{r echo = FALSE, dev='png'}
+
+T_d <- 0.8
+T_R <- 0.97
+
+AD_overlap_extinct <- AD_overlap_all[!isExtant_all]
+AD_diff_extinct <- AD_diff_all[!isExtant_all]
+
+# recalculate cumulative, ignoring overlap values greater than T_R
+AD_overlap_uniq <- sort(unique(AD_overlap_extinct))
+
+nSimBelowTR <- sum(AD_overlap_extinct < T_R)
+
+cumulAbove <- sapply(AD_overlap_uniq, function(x)
+  sum(-AD_diff_extinct[AD_overlap_extinct <= x] > T_d) / nSimBelowTR
+  )
+
+# superimpose the model and the simulated results
+
+lineTypes <- c(4,1)
+
+plot(
+  AD_overlap_uniq, 
+  cumulAbove,
+	xlab = "True Range Overlap Between Anc. & Desc. (Ma)",
+	ylab = "Cumulative Probability of Anc-Desc Discrepancy >= 0.8 Ma",
+	main = "Comparing Cumul. Distributions\n for Discrepancy >= T_d (0.8 Ma)",
+  xlim = xlims,
+  ylim = ylims,
+  lty = lineTypes[1]
+  )
+
+lines(T_o, P_H_diff_greater,
+	lty = lineTypes[2]
+	)
+
+legend("topleft",
+       lty = lineTypes,
+       legend = c("Empirical Dist. From Simulations",
+                  "Prob. Estimated from D & A 2019")
+       )
+
+```
+
+## So just how likely is a discrepancy of 0.8 Ma?
 
 An alternative way of looking at the results of these simulations might be to ask how often we would expect to see a discrepancy of 0.8 Ma or greater in a fossil record with this set of generating parameters. To do this, first we'll need the cumulative distribution for the temporal offset itself, rather than for achieving a particular discrepancy at different values of range overlap (as D&A approached the issue).
 
@@ -809,14 +950,17 @@ An alternative way of looking at the results of these simulations might be to as
 
 # cumulative probability distribution
 
-AD_diff_uniq <- sort(unique(AD_diff_all))
+# only discrepancy invert scale
+AD_discrepancy <- -AD_diff_all[AD_diff_all < 0]
 
-cumulAbove <- sapply(AD_diff_uniq, function(x)
-  sum(AD_diff_all > x) / length(AD_diff_all)
+AD_discrepancy_uniq <- sort(unique(AD_discrepancy))
+
+cumulAbove <- sapply(AD_discrepancy_uniq, function(x)
+  sum(AD_discrepancy < x) / length(AD_diff_all)
   )
 
 plot(
-  -AD_diff_uniq, 
+  AD_discrepancy_uniq, 
   cumulAbove,
 	xlab = "Desc. FAD - Anc. FAD",
 	ylab = "Cumulative Proportion of Runs",
@@ -826,21 +970,30 @@ plot(
 abline(v = 0.8, lty=5, col = "gray", lwd=2)
 
 # what value is closest to 0.8
-closeDiff_T_d <- which(AD_diff_uniq > 0.8)[1]
+closeDiff_T_d <- which(AD_discrepancy_uniq > 0.8)[1]
 
 ```
 
-A nice smooth curve. Note that age offset is plotted so that the pairs with earlier appearing descendants have *positive* offsets, not negative. The values displayed are the cumulative probability of observing an offset between descendant and ancestor first-appearances as large as the values on the horizontal axis. The vertical line is our discrepancy value of interest, 0.8 Ma. The cumulative probability we can estimate for that value is:
+Note that age offset is plotted so that the pairs with earlier appearing descendants have *positive* offsets, not negative. The values displayed are the cumulative probability of observing an offset between descendant and ancestor first-appearances as large as the values on the horizontal axis. The vertical line is our discrepancy value of interest, 0.8 Ma.
+
+One item to note is that discrepancies themselves are not rare in these simulated datasets, as we've already seen.
+
+The closest observed discrepancy value to 0.8 Ma, for which we have a cumulative probability from our empirical curve, is:
 
 ```{r}
 # the value of offset closest to 0.8 Ma
-AD_diff_uniq[closeDiff_T_d]
+AD_discrepancy_uniq[closeDiff_T_d]
+```
+
+Ah, that's pretty close. So what is its cumulative probability?
+
+```{r}
 
 # the cumulative probability of observing a discrepancy at least as large as the above
 cumulAbove[closeDiff_T_d]
 
-# the odds of observing such are thus, 1 in...
-cumulAbove[closeDiff_T_d]/1
+# the odds of observing such are thus, 1 in... (rounded)
+signif(1 / cumulAbove[closeDiff_T_d], digits=0)  
 ```
 
 So
@@ -858,7 +1011,7 @@ So
 
 
 
-```{r echo = FALSE, dev='png' eval = FALSE}
+```{r echo = FALSE, dev='png', eval = FALSE}
 
 # the proportion of A-D pairs with Desc FAD before Anc Fad 
 	# should be equal to the P(T_D < 0)
